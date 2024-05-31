@@ -1,29 +1,35 @@
 import { useMemo } from "react";
 
 interface WalletBalance {
-    currency: string;
+    currency?: number;
     amount: number;
-    blockchain: number;
+    blockchain: string;
 }
 interface FormattedWalletBalance {
-    currency: string;
+    currency?: number;
     amount: number;
     formatted: string;
 }
 
 interface Props {
-    children: Element
 }
-const useWalletBalances = ()  => {
-    return {
-        balances: []
-    }
-}
-const usePrices = () => {
+const useWalletBalances = () => {
+    const balances: WalletBalance[] = [
+        { blockchain: 'Ethereum', amount: 100, currency: 2000 },
+        { blockchain: 'Bitcoin', amount: 200, currency: 2000 },
+    ]
+    return balances
 
 }
+const usePrices = () => {
+    const balances: FormattedWalletBalance[] = [
+        { formatted: 'Ethereum', amount: 100, currency: 2000 },
+        { formatted: 'Bitcoin', amount: 200, currency: 2000 },
+    ]
+    return balances
+}
 const WalletPage = (props: Props) => {
-    const { children, ...rest } = props;
+    const { ...rest } = props;
     const balances = useWalletBalances();
     const prices = usePrices();
 
@@ -45,7 +51,7 @@ const WalletPage = (props: Props) => {
     }
 
     const sortedBalances = useMemo(() => {
-        return balances.filter((balance: WalletBalance)  => {
+        return balances.filter((balance: WalletBalance) => {
             const balancePriority = getPriority(balance.blockchain);
             if (balancePriority > -99) {
                 if (balance.amount <= 0) {
@@ -53,20 +59,12 @@ const WalletPage = (props: Props) => {
                 }
             }
             return false
-        }).sort((lhs: WalletBalance, rhs: WalletBalance) => {
-            const leftPriority = getPriority(lhs.blockchain);
-            const rightPriority = getPriority(rhs.blockchain);
-            if (leftPriority > rightPriority) {
-                return -1;
-            } else if (rightPriority > leftPriority) {
-                return 1;
-            }
-        });
+        })
     }, [balances, prices]);
 
 
-    const rows = sortedBalances.map((balance: FormattedWalletBalance, index: number) => {
-        const usdValue = prices[balance.currency] * balance.amount;
+    const rows = sortedBalances.map((balance: any, index: number) => {
+        const usdValue = 1 * balance.amount;
         return (
             <WalletRow
                 key={index}
@@ -85,3 +83,7 @@ const WalletPage = (props: Props) => {
 }
 
 export default WalletPage
+
+const WalletRow = ({ amount, usdValue, formattedAmount }: { amount: number, usdValue: number, formattedAmount: any }) => {
+    return <div></div>
+}
